@@ -1,6 +1,7 @@
 import { load } from "cheerio";
-import AnimekaiDecoder from "./decoder.js";
-// import { AnimekaiDecoder } from "./extractor.js";
+import { AnimekaiDecoder } from "./clean/extractor.js";
+// import AnimekaiDecoder from "./decoder.js";
+import { AnimakaiTest } from "./clean/test.js";
 
 const headers = {
   "User-Agent":
@@ -18,7 +19,7 @@ const headers = {
   Cookie:
     "usertype=guest; session=hxYne0BNXguMc8zK1FHqQKXPmmoANzBBOuNPM64a; cf_clearance=WfGWV1bKGAaNySbh.yzCyuobBOtjg0ncfPwMhtsvsrs-1737611098-1.2.1.1-zWHcaytuokjFTKbCAxnSPDc_BWAeubpf9TAAVfuJ2vZuyYXByqZBXAZDl_VILwkO5NOLck8N0C4uQr4yGLbXRcZ_7jfWUvfPGayTADQLuh.SH.7bvhC7DmxrMGZ8SW.hGKEQzRJf8N7h6ZZ27GMyqOfz1zfrOiu9W30DhEtW2N7FAXUPrdolyKjCsP1AK3DqsDtYOiiPNLnu47l.zxK80XogfBRQkiGecCBaeDOJHenjn._Zgykkr.F_2bj2C3AS3A5mCpZSlWK5lqhV6jQSQLF9wKWitHye39V.6NoE3RE",
 };
-const decoder = AnimekaiDecoder;
+const decoder = new AnimekaiDecoder();
 const proxy = "https://slave.nopile6577.workers.dev/cors?url=";
 
 const getEpisodes = async (id) => {
@@ -106,7 +107,7 @@ const getServers = async (id) => {
 const getSources = async (id) => {
   const { result } = await (
     await fetch(
-      `https://animekai.to/ajax/links/view?id=${id}&_=${decoder.generate_token(
+      `https://animekai.to/ajax/links/view?id=${id}&_=${decoder.GenerateToken(
         id
       )}`,
       {
@@ -117,16 +118,21 @@ const getSources = async (id) => {
       }
     )
   ).json();
-  let { url } = JSON.parse(
-    decoder.decode_iframe_data(result).replace(/\\/gm, "")
-  );
-  url = url.replace(/\/(e|e2)\//, "/media/");
-  console.log(url);
+  let data = JSON.parse(decoder.DecodeIframeData(result).replace(/\\/gm, ""));
+  const url = data.url.replace(/\/(e|e2)\//, "/media/");
   const sources = await fetch(url, { headers })
     .then((r) => r.json())
-    .then((r) => decoder.decode(r.result).replace(/\\/gm, ""));
+    .then((r) => JSON.parse(decoder.Decode(r.result).replace(/\\/gm, "")));
+  sources.intro = {
+    start: data?.skip.intro[0],
+    end: data?.skip.intro[1],
+  };
+  sources.outro = {
+    start: data?.skip.outro[0],
+    end: data?.skip.outro[1],
+  };
   console.log(sources);
-  return JSON.parse(sources);
+  return sources;
 };
 
-getSources("mxWbnEz1DQ");
+getSources("dIK48KWp6Q");
