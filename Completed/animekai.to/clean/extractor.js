@@ -153,9 +153,8 @@ export class AnimekaiDecoder {
         "T1CHYU0OKgz"
       )
     );
-
     return decodeURIComponent(n);
-  };
+  }
 }
 // const { GenerateToken, DecodeIframeData, Decode } = new AnimekaiDecoder();
 
