@@ -120,7 +120,7 @@ export class AnimekaiDecoder {
     return decodeURIComponent(n);
   };
 
-  Decode = (n) => {
+Decode = (n) => {
     n = this.#reverseIt(
       this.#substitute(
         this.#transform(
@@ -135,7 +135,7 @@ export class AnimekaiDecoder {
                       this.#transform(
                         "EZnfG1IL6DF",
                         this.#base64UrlDecode(
-                          this.#reverseIt(this.#base64UrlDecode((n = `${n}`)))
+                          this.#reverseIt(this.#base64UrlDecode(`${n}`))
                         )
                       ),
                       "M2DCEbQmWOe",
@@ -153,10 +153,9 @@ export class AnimekaiDecoder {
         "T1CHYU0OKgz"
       )
     );
-
     return decodeURIComponent(n);
-  };
 }
+
 // const { GenerateToken, DecodeIframeData, Decode } = new AnimekaiDecoder();
 
 // console.log(GenerateToken("OID48ezyohKuiQ")); //S0pJWTdQcVl1c2NtRGgwbmluWHA5TGJXNFF1TzNtS1NsYjc
